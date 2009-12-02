@@ -15,8 +15,9 @@ from monkeypatching import BackObject
 CF_CONNECTION = None
 USERNAME = None
 API_KEY = None
-EXCLUDE_CONTAINERS = ['.CDN_ACCESS_LOGS']
+TRANSIENT_WINDOW=None
 
+EXCLUDE_CONTAINERS = ['.CDN_ACCESS_LOGS']
 #TODO: some better checking
 FILES = sys.argv[1:]
 
@@ -92,13 +93,21 @@ class Upload(threading.Thread):
         fobj.close()
         
     def show(self):
+        global TRANSIENT_WINDOW
+        
         gladefile = os.path.join(GLADE_DIR, 'dialog_progressbar.glade')
         window_tree = gtk.glade.XML(gladefile)
 
         progressbar_window = window_tree.get_widget("progressbar_window")
+        progressbar_window.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
+        if TRANSIENT_WINDOW:
+            progressbar_window.set_transient_for(TRANSIENT_WINDOW)
+            
+        TRANSIENT_WINDOW = progressbar_window
+        
         self.progressbar_label1 = window_tree.get_widget('label1')
 
-        self.progressbar = window_tree.get_widget("progressbar1")        
+        self.progressbar = window_tree.get_widget("progressbar1")
         button_cancel = window_tree.get_widget('button2')
         button_cancel.connect('clicked', self.quit)
         
