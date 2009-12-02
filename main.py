@@ -18,7 +18,7 @@ API_KEY = None
 TRANSIENT_WINDOW=None
 
 #TODO: some better checking
-FILES = sys.argv[1:]
+FILES = []
 
 GLADE_DIR = os.path.join(os.path.dirname
                        (os.path.abspath(__file__)),
@@ -221,7 +221,9 @@ class AskUsernameKey(object):
         self.entry_username = None
         self.entry_api_key = None
         self.entry_message = None
-
+        self.gconf_key = CloudFilesGconf()
+        self.authenticated = False
+        
     def clicked(self, *kargs, **kwargs):
         self.username = self.entry_username.get_text()
         self.api_key = self.entry_api_key.get_text()
@@ -229,22 +231,23 @@ class AskUsernameKey(object):
         if not self.username:
             self.entry_message.set_text("You have not entered a Username")
             self.entry_message.show()
-            return False
         
         if not self.api_key:
             self.entry_message.set_text("You have not entered an API Key")
             self.entry_message.show()
-            return False
         
         check_username = CheckUsernameKey()        
         if check_username.check(self.username, self.api_key):
-            container_list = ShowContainersList()
-            container_list.show()
-        else:
-            self.entry_message.set_text("Authentication has failed")
-            self.entry_message.show()
-            return False
-            
+            self.authenticated = True
+            self.auth_window.destroy()
+            self.gconf_key.set_entry("username", self.username, "string")
+            self.gconf_key.set_entry("api_key", self.api_key, "string")
+            return True
+
+        self.entry_message.set_text("Authentication has failed")
+        self.entry_message.show()
+
+    def quit(self, *args, **kwargs):
         self.auth_window.destroy()
         
     def show(self):
@@ -270,10 +273,9 @@ class AskUsernameKey(object):
         button_cancel = window_tree.get_widget('button2')
 
         button_ok.connect('clicked', self.clicked)
-        button_cancel.connect('clicked', gtk.main_quit)
-        self.auth_window.connect('destroy', gtk.main_quit)
-        self.auth_window.show()
-        return 
+        button_cancel.connect('clicked', self.quit)
+        self.auth_window.connect('destroy', self.quit)
+        self.auth_window.run()
     
 class CloudFileUploader(object):
 
@@ -287,18 +289,32 @@ class CloudFileUploader(object):
         api_key = self.gconf_key.get_entry("api_key", "string")
 
         check_username = CheckUsernameKey()
-        if all([username, api_key]) and \
-                check_username.check(username, api_key):
-            USERNAME = username
-            API_KEY = api_key
-            #TODO: set gconf here
-            container_list = ShowContainersList()
-            container_list.show()
-        else:
+        if not(all([username, api_key]) and \
+                   check_username.check(username, api_key)):
             ask = AskUsernameKey(username=username)
             ask.show()
+
+            if not ask.authenticated:
+                #make sure it has been destroyed
+                ask.auth_window.destroy()
+                return
+            
+            username = self.gconf_key.get_entry("username", "string")
+            api_key = self.gconf_key.get_entry("api_key", "string")
+
+            
+        USERNAME = username
+        API_KEY = api_key
+
+        self.gconf_key.set_entry("username", username, "string")
+        self.gconf_key.set_entry("api_key", api_key, "string")
+
+        #TODO: set gconf here
+        container_list = ShowContainersList()
+        container_list.show()
             
 if __name__ == '__main__':
+    FILES = sys.argv[1:]
     if not FILES:
         print "You need to specify files on the command line"
         sys.exit(0)
