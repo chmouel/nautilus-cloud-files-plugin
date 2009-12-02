@@ -12,10 +12,10 @@ gtk.gdk.threads_init()
 from config import CloudFilesGconf
 from monkeypatching import BackObject
 
-CF_CONNECTION=None
-USERNAME=None
-API_KEY=None
-EXCLUDE_CONTAINERS=['.CDN_ACCESS_LOGS']
+CF_CONNECTION = None
+USERNAME = None
+API_KEY = None
+EXCLUDE_CONTAINERS = ['.CDN_ACCESS_LOGS']
 
 #TODO: some better checking
 FILES = sys.argv[1:]
@@ -24,7 +24,6 @@ FILES = sys.argv[1:]
 GLADE_DIR = os.path.join(os.path.dirname
                        (os.path.abspath(__file__)),
                        "glade")
-OFFLINE_TESTING=True
 
 class CheckUsernameKey(object):
     """
@@ -34,7 +33,7 @@ class CheckUsernameKey(object):
     def __init__(self):
         self.dialog_error = None
         self.init_dialog_error()
-
+        
     def hide_widget(self, widget, *args, **kwargs):
         widget.hide()
         return True
@@ -47,7 +46,8 @@ class CheckUsernameKey(object):
         except(cloudfiles.errors.AuthenticationError,
                cloudfiles.errors.AuthenticationFailed):
             self.dialog_error.set_markup(
-                'Your username (%s) or API Key (%s) does not seem to match or are incorrect.' % (username, api_key)
+                'Your username (%s) or API Key (%s) does not seem to match or are incorrect.' % \
+                    (username, api_key)
                 )
             self.dialog_error.run()
             return False
@@ -73,36 +73,36 @@ class Upload(threading.Thread):
         self.canceled = False
         self.filename = filename
         self.chosen_container = chosen_container
-        self.glade_dir = os.path.join(os.path.dirname
-                                      (os.path.abspath(__file__)),
-                                      "glade")
         threading.Thread.__init__(self) 
-
+        self.progressbar = None
+        self.progressbar_label1 = None
+        
     def run(self):
         cf_object = BackObject(
             self.chosen_container,
             os.path.basename(self.filename)
             )
 
-        self.show_progressbar()
+        self.show()
+        
         self.progressbar_label1.set_text("Uploading %s" % cf_object)
         
         fobj = open(self.filename, 'rb')
-        ret = cf_object.write(fobj, callback=self.callback, verify=True)
+        cf_object.write(fobj, callback=self.callback, verify=True)
         fobj.close()
         
-    def show_progressbar(self):
-        gladefile = os.path.join(self.glade_dir, 'dialog_progressbar.glade')
+    def show(self):
+        gladefile = os.path.join(GLADE_DIR, 'dialog_progressbar.glade')
         window_tree = gtk.glade.XML(gladefile)
 
-        self.progressbar_window = window_tree.get_widget("progressbar_window")
+        progressbar_window = window_tree.get_widget("progressbar_window")
         self.progressbar_label1 = window_tree.get_widget('label1')
 
         self.progressbar = window_tree.get_widget("progressbar1")        
         button_cancel = window_tree.get_widget('button2')
         button_cancel.connect('clicked', self.quit)
         
-        self.progressbar_window.show()
+        progressbar_window.show()
 
 
     def quit(self, *args, **kwargs):
@@ -123,7 +123,9 @@ class ShowContainersList(object):
     def __init__(self):
         #TODO: record
         self.container_master_button = None
-
+        self.containers_list_window = None
+        self.container_new_entry = None
+        
     def list_containers(self):
         if not CF_CONNECTION:
             return []
@@ -202,6 +204,10 @@ class AskUsernameKey(object):
     def __init__(self, username=None):
         self.username = username
         self.api_key = None
+        self.auth_window = None
+        self.entry_username = None
+        self.entry_api_key = None
+        self.entry_message = None
         
     def clicked(self, *kargs, **kwargs):
         self.username = self.entry_username.get_text()
@@ -270,8 +276,8 @@ class CloudFileUploader(object):
         check_username = CheckUsernameKey()
         if all([username, api_key]) and \
                 check_username.check(username, api_key):
-            USERNAME=username
-            API_KEY=api_key
+            USERNAME = username
+            API_KEY = api_key
             #TODO: set gconf here
             container_list = ShowContainersList()
             container_list.show()
