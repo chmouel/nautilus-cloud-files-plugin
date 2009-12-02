@@ -17,14 +17,13 @@ USERNAME = None
 API_KEY = None
 TRANSIENT_WINDOW=None
 
-EXCLUDE_CONTAINERS = ['.CDN_ACCESS_LOGS']
 #TODO: some better checking
 FILES = sys.argv[1:]
 
-#TODO: consts
 GLADE_DIR = os.path.join(os.path.dirname
                        (os.path.abspath(__file__)),
                        "glade")
+EXCLUDE_CONTAINERS = ['.CDN_ACCESS_LOGS']
 
 class CheckUsernameKey(object):
     """
@@ -130,10 +129,11 @@ class Upload(threading.Thread):
         
 class ShowContainersList(object):
     def __init__(self):
-        #TODO: record
         self.container_master_button = None
         self.containers_list_window = None
         self.container_new_entry = None
+        self.gconf_key = CloudFilesGconf()
+        self.default_container = self.gconf_key.get_entry("default_container", "string")
         
     def list_containers(self):
         if not CF_CONNECTION:
@@ -152,14 +152,16 @@ class ShowContainersList(object):
         except(cloudfiles.errors.ResponseError):
             return
     
-    def _add_radiobutton(self, vbox):
+    def add_radiobutton(self, vbox):
         containers = self.list_containers()
 
         for container in sorted(containers):
             button = gtk.RadioButton(self.container_master_button, container)
             vbox.pack_start(button, True, True, 0)
+            if self.default_container and container == self.default_container:
+                button.set_active(True)
             button.show()
-
+            
             if not self.container_master_button:
                 self.container_master_button = button
 
@@ -175,6 +177,8 @@ class ShowContainersList(object):
                         )
         self.containers_list_window.destroy()
 
+        self.gconf_key.set_entry("default_container", str(container), "string")
+        
         cnt = 0
         for obj in FILES:
             if cnt >= 1:
@@ -198,8 +202,8 @@ class ShowContainersList(object):
         self.container_new_entry = window_tree.get_widget('entry1')
         
         vbox1 = window_tree.get_widget('vbox1')
-        self._add_radiobutton(vbox1)
-        
+        self.add_radiobutton(vbox1)
+
         button_ok = window_tree.get_widget('button1')
         button_cancel = window_tree.get_widget('button2')
 
@@ -217,7 +221,7 @@ class AskUsernameKey(object):
         self.entry_username = None
         self.entry_api_key = None
         self.entry_message = None
-        
+
     def clicked(self, *kargs, **kwargs):
         self.username = self.entry_username.get_text()
         self.api_key = self.entry_api_key.get_text()
