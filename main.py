@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import os
-import time
+import sys
 import socket
 import threading
 
@@ -13,8 +13,12 @@ from config import CloudFilesGconf
 from monkeypatching import BackObject
 
 CF_CONNECTION=None
+USERNAME=None
+API_KEY=None
 EXCLUDE_CONTAINERS=['.CDN_ACCESS_LOGS']
-TEST_FILES = ['/tmp/wally_2.3.0-1_i386.deb']
+
+#TODO: some better checking
+FILES = sys.argv[1:]
 
 #TODO: consts
 GLADE_DIR = os.path.join(os.path.dirname
@@ -65,7 +69,7 @@ class CheckUsernameKey(object):
         self.dialog_error.connect('response', self.hide_widget)
 
 class Upload(threading.Thread):
-    def __init__(self, filename, chosen_container):
+    def __init__(self, cnx, filename, chosen_container):
         self.canceled = False
         self.filename = filename
         self.chosen_container = chosen_container
@@ -160,10 +164,17 @@ class ShowContainersList(object):
                         )
         self.containers_list_window.destroy()
 
-
-        for obj in TEST_FILES:
-            upload = Upload(obj, container)
+        cnt = 0
+        for obj in FILES:
+            if cnt >= 1:
+                cnx = cloudfiles.get_connection(USERNAME, API_KEY)
+            else:
+                cnx = CF_CONNECTION
+            
+            upload = Upload(cnx, obj, container)
             upload.start()
+
+            cnt += 1
         return
         
     def show(self):
@@ -247,17 +258,21 @@ class AskUsernameKey(object):
     
 class CloudFileUploader(object):
 
-    def __init__(self, object_file):
-        self.object_file = object_file
+    def __init__(self):
         self.gconf_key = CloudFilesGconf()
         
     def main(self):
+        global USERNAME, API_KEY
+        
         username = self.gconf_key.get_entry("username", "string")
         api_key = self.gconf_key.get_entry("api_key", "string")
 
         check_username = CheckUsernameKey()
         if all([username, api_key]) and \
                 check_username.check(username, api_key):
+            USERNAME=username
+            API_KEY=api_key
+            #TODO: set gconf here
             container_list = ShowContainersList()
             container_list.show()
         else:
@@ -265,7 +280,11 @@ class CloudFileUploader(object):
             ask.show()
             
 if __name__ == '__main__':
-    c = CloudFileUploader("/etc/passwd")
+    if not FILES:
+        print "You need to specify files on the command line"
+        sys.exit(0)
+
+    c = CloudFileUploader()
     c.main()
     gtk.main()
             
