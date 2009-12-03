@@ -2,7 +2,6 @@
 import os
 import sys
 import socket
-import threading
 
 import cloudfiles
 
@@ -68,12 +67,11 @@ class CheckUsernameKey(object):
         self.dialog_error.connect('delete-event', self.hide_widget)
         self.dialog_error.connect('response', self.hide_widget)
 
-class Upload(threading.Thread):
+class Upload(object):
     def __init__(self, cnx, filename, chosen_container):
         self.canceled = False
         self.filename = filename
         self.chosen_container = chosen_container
-        threading.Thread.__init__(self) 
         self.progressbar = None
         self.progressbar_label1 = None
         
@@ -187,7 +185,7 @@ class ShowContainersList(object):
                 cnx = CF_CONNECTION
             
             upload = Upload(cnx, obj, container)
-            upload.start()
+            upload.run()
 
             cnt += 1
         return
