@@ -24,9 +24,9 @@ class NautilusCloudFilesExtension(nautilus.MenuProvider):
             return
         
         item = nautilus.MenuItem('NautilusPython::upload_rscf_item',
+                                 'Upload to Rackspace CloudFiles',
                                  'Upload to Rackspace CF' ,
-                                 'Upload to Rackspace CF',
-                                 gtk.STOCK_FIND_AND_REPLACE
+                                 gtk.STOCK_CONVERT
                                  )
         item.connect('activate', self.menu_activate_cb, files)
         return item,
