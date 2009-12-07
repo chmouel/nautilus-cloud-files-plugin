@@ -141,7 +141,9 @@ class ShowContainersList(object):
         button_cancel = window_tree.get_widget('button2')
 
         button_ok.connect('clicked', self.ok)
-
+        button_ok.set_flags(gtk.CAN_DEFAULT)
+        button_ok.grab_default()
+        
         button_cancel.connect('clicked', self.quit)
         self.containers_list_window.connect('destroy', self.quit)
         self.containers_list_window.run()
