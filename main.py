@@ -113,12 +113,7 @@ class ShowContainersList(object):
         
         cnt = 0
         for obj in self.stuff_to_upload:
-            if cnt >= 1:
-                cnx = cloudfiles.get_connection(USERNAME, API_KEY)
-            else:
-                cnx = CF_CONNECTION
-            
-            upload = Upload(cnx, obj, container)
+            upload = Upload(obj, container)
             upload.run()
             cnt += 1
 

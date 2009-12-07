@@ -6,7 +6,7 @@ import gtk.glade
 
 #TODO
 class Upload(object):
-    def __init__(self, cnx, filename, chosen_container):
+    def __init__(self, filename, chosen_container):
         self.canceled = False
         self.filename = filename
         self.chosen_container = chosen_container
@@ -72,6 +72,6 @@ if __name__ == '__main__':
     container = cnx.get_container("public")
 
     for obj in tests:
-        upload = Upload(cnx, obj, container)
+        upload = Upload(obj, container)
         upload.run()
     
