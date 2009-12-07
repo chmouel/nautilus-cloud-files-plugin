@@ -1,11 +1,10 @@
+#!/usr/bin/python
 import os
 from monkeypatching import BackObject
+from constants import GLADE_DIR
 import gtk.glade
 
 #TODO
-GLADE_DIR = os.path.join(os.path.dirname
-                       (os.path.abspath(__file__)),
-                       "glade")
 TRANSIENT_WINDOW=None
 
 class Upload(object):
@@ -73,7 +72,6 @@ class Upload(object):
 
 if __name__ == '__main__':
     import cloudfiles
-    import os
 
     tests=["/tmp/big-1.mp3", "/tmp/big-2.mp3"]
     

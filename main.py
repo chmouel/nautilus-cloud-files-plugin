@@ -9,15 +9,11 @@ import gtk.glade
 
 from config import CloudFilesGconf
 from progressbar import Upload
+from constants import GLADE_DIR, EXCLUDE_CONTAINERS
 
 CF_CONNECTION = None
 USERNAME = None
 API_KEY = None
-
-GLADE_DIR = os.path.join(os.path.dirname
-                       (os.path.abspath(__file__)),
-                       "glade")
-EXCLUDE_CONTAINERS = ['.CDN_ACCESS_LOGS']
 
 class CheckUsernameKey(object):
     """
