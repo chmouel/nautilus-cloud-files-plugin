@@ -12,3 +12,4 @@ def detect_glade():
 
 GLADE_DIR = detect_glade()
 EXCLUDE_CONTAINERS = ['.CDN_ACCESS_LOGS']
+SHORTENER="http://is.gd/api.php?longurl=%s"

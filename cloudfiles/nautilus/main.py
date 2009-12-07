@@ -2,19 +2,22 @@
 import os
 import sys
 import socket
-
-import cloudfiles
+import urllib
+import urllib2
 
 import gtk.glade
 import pynotify
+import cloudfiles
 
 from config import CloudFilesGconf
 from progressbar import Upload
-from constants import GLADE_DIR, EXCLUDE_CONTAINERS
+from constants import GLADE_DIR, EXCLUDE_CONTAINERS, SHORTENER
 
 CF_CONNECTION = None
 USERNAME = None
 API_KEY = None
+
+short_url = lambda x: urllib.urlopen(SHORTENER % urllib2.quote(x)).read().strip()
 
 class CheckUsernameKey(object):
     """
@@ -132,7 +135,7 @@ class ShowContainersList(object):
             if self.button_clipboard.get_active() and public_uris:
                 cb = gtk.clipboard_get('CLIPBOARD')
                 cb.clear()
-                cb.set_text(" ".join(public_uris))
+                cb.set_text(" ".join(map(short_url, public_uris)))
             
             n = pynotify.Notification(title, msg, gtk.STOCK_FIND_AND_REPLACE)
             n.set_timeout(pynotify.EXPIRES_DEFAULT)
