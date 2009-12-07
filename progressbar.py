@@ -5,8 +5,6 @@ from constants import GLADE_DIR
 import gtk.glade
 
 #TODO
-TRANSIENT_WINDOW=None
-
 class Upload(object):
     def __init__(self, cnx, filename, chosen_container):
         self.canceled = False
@@ -32,18 +30,11 @@ class Upload(object):
         fobj.close()
         
     def show(self):
-        global TRANSIENT_WINDOW
-        
         gladefile = os.path.join(GLADE_DIR, 'dialog_progressbar.glade')
         window_tree = gtk.glade.XML(gladefile)
 
         self.window = window_tree.get_widget("progressbar_window")
         self.window.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
-        if TRANSIENT_WINDOW:
-            self.window.set_transient_for(TRANSIENT_WINDOW)
-            
-        TRANSIENT_WINDOW = self.window
-        
         self.progressbar_label1 = window_tree.get_widget('label1')
 
         self.progressbar = window_tree.get_widget("progressbar1")
