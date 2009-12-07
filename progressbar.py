@@ -22,8 +22,10 @@ class Upload(object):
             )
 
         self.show()
-        
-        self.progressbar_label1.set_text("Uploading %s" % cf_object)
+
+        title = "Uploading %s" % (cf_object)
+        self.window.set_title(title)
+        self.progressbar_label1.set_text(title)
         
         fobj = open(self.filename, 'rb')
         ret = cf_object.write(fobj, callback=self.callback, verify=True)
@@ -35,12 +37,12 @@ class Upload(object):
         gladefile = os.path.join(GLADE_DIR, 'dialog_progressbar.glade')
         window_tree = gtk.glade.XML(gladefile)
 
-        self.progressbar_window = window_tree.get_widget("progressbar_window")
-        self.progressbar_window.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
+        self.window = window_tree.get_widget("progressbar_window")
+        self.window.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
         if TRANSIENT_WINDOW:
-            self.progressbar_window.set_transient_for(TRANSIENT_WINDOW)
+            self.window.set_transient_for(TRANSIENT_WINDOW)
             
-        TRANSIENT_WINDOW = self.progressbar_window
+        TRANSIENT_WINDOW = self.window
         
         self.progressbar_label1 = window_tree.get_widget('label1')
 
@@ -48,11 +50,11 @@ class Upload(object):
         button_cancel = window_tree.get_widget('button2')
         button_cancel.connect('clicked', self.quit)
         
-        self.progressbar_window.show()
+        self.window.show()
 
     def quit(self, *args, **kwargs):
         self.canceled = True
-        self.progressbar_window.destroy()
+        self.window.destroy()
         
     def callback(self, current, total):
         if self.canceled:
