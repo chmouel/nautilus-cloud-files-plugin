@@ -1,6 +1,11 @@
+nautilus-cloud-files-plugin (0.2-1) unstable; urgency=low
+
+  * Copy to clipboard.
+
+ -- Chmouel Boudjnah <chmouel@chmouel.com>  Mon, 07 Dec 2009 15:17:48 +0000
+
 nautilus-cloud-files-plugin (0.1-1) unstable; urgency=low
 
   * First version.
 
- -- Chmouel Boudjnah <chmouel.boudjnah@rackspace.co.uk>  Mon, 07 Dec 2009 13:56:58 +0000
- 
+ -- Chmouel Boudjnah <chmouel@chmouel.com>  Mon, 07 Dec 2009 15:17:40 +0000
