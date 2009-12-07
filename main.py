@@ -121,7 +121,10 @@ class ShowContainersList(object):
             upload = Upload(cnx, obj, container)
             upload.run()
             cnt += 1
-        
+
+    def quit(self, *args, **kwargs):
+        self.containers_list_window.destroy()
+            
     def show(self):
         gladefile = os.path.join(GLADE_DIR, 'dialog_containers_list.glade')
         window_tree = gtk.glade.XML(gladefile)
@@ -139,9 +142,8 @@ class ShowContainersList(object):
 
         button_ok.connect('clicked', self.ok)
 
-        #TODO!
-        # button_cancel.connect('clicked', gtk.main_quit)
-        #self.containers_list_window.connect('destroy', gtk.main_quit)
+        button_cancel.connect('clicked', self.quit)
+        self.containers_list_window.connect('destroy', self.quit)
         self.containers_list_window.run()
         
 class AskUsernameKey(object):
@@ -241,7 +243,6 @@ class CloudFileUploader(object):
         self.gconf_key.set_entry("username", username, "string")
         self.gconf_key.set_entry("api_key", api_key, "string")
 
-        #TODO: set gconf here
         container_list = ShowContainersList(self.stuff_to_upload)
         container_list.show()
         
