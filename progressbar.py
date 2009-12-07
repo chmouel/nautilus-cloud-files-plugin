@@ -27,7 +27,7 @@ class Upload(object):
         self.progressbar_label1.set_text("Uploading %s" % cf_object)
         
         fobj = open(self.filename, 'rb')
-        cf_object.write(fobj, callback=self.callback, verify=True)
+        ret = cf_object.write(fobj, callback=self.callback, verify=True)
         fobj.close()
         
     def show(self):
@@ -51,7 +51,6 @@ class Upload(object):
         
         self.progressbar_window.show()
 
-
     def quit(self, *args, **kwargs):
         self.canceled = True
         self.progressbar_window.destroy()
@@ -59,12 +58,17 @@ class Upload(object):
     def callback(self, current, total):
         if self.canceled:
             return False
+
+        current = current + 4096
         
         while gtk.events_pending():
             gtk.main_iteration()
         self.progressbar.set_fraction(float(current) / total)
         self.progressbar.set_text("%d / %d" % (current, total))
 
+        if current == total:
+            self.quit()
+        
         return True
 
 if __name__ == '__main__':

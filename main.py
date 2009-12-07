@@ -6,18 +6,13 @@ import socket
 import cloudfiles
 
 import gtk.glade
-gtk.gdk.threads_init()
 
 from config import CloudFilesGconf
-from monkeypatching import BackObject
+from progressbar import Upload
 
 CF_CONNECTION = None
 USERNAME = None
 API_KEY = None
-TRANSIENT_WINDOW=None
-
-#TODO: some better checking
-FILES = []
 
 GLADE_DIR = os.path.join(os.path.dirname
                        (os.path.abspath(__file__)),
@@ -67,71 +62,14 @@ class CheckUsernameKey(object):
         self.dialog_error.connect('delete-event', self.hide_widget)
         self.dialog_error.connect('response', self.hide_widget)
 
-class Upload(object):
-    def __init__(self, cnx, filename, chosen_container):
-        self.canceled = False
-        self.filename = filename
-        self.chosen_container = chosen_container
-        self.progressbar = None
-        self.progressbar_label1 = None
-        
-    def run(self):
-        cf_object = BackObject(
-            self.chosen_container,
-            os.path.basename(self.filename)
-            )
-
-        self.show()
-        
-        self.progressbar_label1.set_text("Uploading %s" % cf_object)
-        
-        fobj = open(self.filename, 'rb')
-        cf_object.write(fobj, callback=self.callback, verify=True)
-        fobj.close()
-        
-    def show(self):
-        global TRANSIENT_WINDOW
-        
-        gladefile = os.path.join(GLADE_DIR, 'dialog_progressbar.glade')
-        window_tree = gtk.glade.XML(gladefile)
-
-        progressbar_window = window_tree.get_widget("progressbar_window")
-        progressbar_window.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
-        if TRANSIENT_WINDOW:
-            progressbar_window.set_transient_for(TRANSIENT_WINDOW)
-            
-        TRANSIENT_WINDOW = progressbar_window
-        
-        self.progressbar_label1 = window_tree.get_widget('label1')
-
-        self.progressbar = window_tree.get_widget("progressbar1")
-        button_cancel = window_tree.get_widget('button2')
-        button_cancel.connect('clicked', self.quit)
-        
-        progressbar_window.show()
-
-
-    def quit(self, *args, **kwargs):
-        self.canceled = True
-        
-    def callback(self, current, total):
-        if self.canceled:
-            return False
-        
-        while gtk.events_pending():
-            gtk.main_iteration()
-        self.progressbar.set_fraction(float(current) / total)
-        self.progressbar.set_text("%d / %d" % (current, total))
-
-        return True
-        
 class ShowContainersList(object):
-    def __init__(self):
+    def __init__(self, stuff_to_upload):
         self.container_master_button = None
         self.containers_list_window = None
         self.container_new_entry = None
         self.gconf_key = CloudFilesGconf()
         self.default_container = self.gconf_key.get_entry("default_container", "string")
+        self.stuff_to_upload = stuff_to_upload
         
     def list_containers(self):
         if not CF_CONNECTION:
@@ -178,7 +116,7 @@ class ShowContainersList(object):
         self.gconf_key.set_entry("default_container", str(container), "string")
         
         cnt = 0
-        for obj in FILES:
+        for obj in self.stuff_to_upload:
             if cnt >= 1:
                 cnx = cloudfiles.get_connection(USERNAME, API_KEY)
             else:
@@ -186,9 +124,7 @@ class ShowContainersList(object):
             
             upload = Upload(cnx, obj, container)
             upload.run()
-
             cnt += 1
-        return
         
     def show(self):
         gladefile = os.path.join(GLADE_DIR, 'dialog_containers_list.glade')
@@ -206,10 +142,11 @@ class ShowContainersList(object):
         button_cancel = window_tree.get_widget('button2')
 
         button_ok.connect('clicked', self.ok)
-        button_cancel.connect('clicked', gtk.main_quit)
 
-        self.containers_list_window.connect('destroy', gtk.main_quit)
-        self.containers_list_window.show()
+        #TODO!
+        # button_cancel.connect('clicked', gtk.main_quit)
+        #self.containers_list_window.connect('destroy', gtk.main_quit)
+        self.containers_list_window.run()
         
 class AskUsernameKey(object):
     def __init__(self, username=None):
@@ -277,8 +214,9 @@ class AskUsernameKey(object):
     
 class CloudFileUploader(object):
 
-    def __init__(self):
+    def __init__(self, stuff_to_upload):
         self.gconf_key = CloudFilesGconf()
+        self.stuff_to_upload = stuff_to_upload
         
     def main(self):
         global USERNAME, API_KEY
@@ -308,16 +246,16 @@ class CloudFileUploader(object):
         self.gconf_key.set_entry("api_key", api_key, "string")
 
         #TODO: set gconf here
-        container_list = ShowContainersList()
+        container_list = ShowContainersList(self.stuff_to_upload)
         container_list.show()
-            
+        
 if __name__ == '__main__':
-    FILES = sys.argv[1:]
-    if not FILES:
+    stuff_to_upload = sys.argv[1:]
+    if not stuff_to_upload:
         print "You need to specify files on the command line"
         sys.exit(0)
 
-    c = CloudFileUploader()
+    c = CloudFileUploader(stuff_to_upload)
     c.main()
     gtk.main()
             
