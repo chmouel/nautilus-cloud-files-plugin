@@ -1,7 +1,9 @@
 import os
 
 def detect_glade():
-    glade_cwd=os.path.join(os.path.dirname (os.path.abspath(__file__)), "glade")
+    glade_cwd=os.path.abspath(os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), 
+        "../", "../", "glade"))
     if os.path.exists(glade_cwd):
         return glade_cwd
     else:
