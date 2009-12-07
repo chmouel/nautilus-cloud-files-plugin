@@ -1,10 +1,8 @@
 import nautilus
-import sys
 import urllib2
 import gtk
 
-sys.path.append("/home/chmouel/GIT/nautilus-plugin") #TODO
-import main
+from cloudfiles.nautilus import main
 
 class NautilusCloudFilesExtension(nautilus.MenuProvider):
     def __init__(self):

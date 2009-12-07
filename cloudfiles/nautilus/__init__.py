@@ -1,0 +1,2 @@
+# Nautilus Cloud Files plugin.
+
