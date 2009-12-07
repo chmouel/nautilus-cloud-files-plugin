@@ -110,8 +110,10 @@ class ShowContainersList(object):
                         )
         self.containers_list_window.destroy()
 
+        self.gconf_key.set_entry("copy_to_clipboard", self.button_clipboard.get_active(), "boolean")
         self.gconf_key.set_entry("default_container", str(container), "string")
 
+        public_uris = []
         cnt = 0
         for obj in self.stuff_to_upload:
             pynotify.init("Uploading %s" % obj)
@@ -121,10 +123,16 @@ class ShowContainersList(object):
             if not ret:
                 conclusion = "Aborted"
             else:
-                conclusion = "Successfully Uploaded"
+                conclusion = "Succedeed"
+                public_uris.append(ret)
 
             title = "Rackspace Cloud Files Upload"
             msg = "File %s %s" % (obj, conclusion)
+
+            if self.button_clipboard.get_active() and public_uris:
+                cb = gtk.clipboard_get('CLIPBOARD')
+                cb.clear()
+                cb.set_text(" ".join(public_uris))
             
             n = pynotify.Notification(title, msg, gtk.STOCK_FIND_AND_REPLACE)
             n.set_timeout(pynotify.EXPIRES_DEFAULT)
@@ -149,10 +157,15 @@ class ShowContainersList(object):
 
         button_ok = window_tree.get_widget('button1')
         button_cancel = window_tree.get_widget('button2')
+        self.button_clipboard = window_tree.get_widget('checkbutton1')
 
+        default_clipboard = self.gconf_key.get_entry("copy_to_clipboard", "boolean")
+        self.button_clipboard.set_active(default_clipboard)
+        
         button_ok.connect('clicked', self.ok)
         button_ok.set_flags(gtk.CAN_DEFAULT)
         button_ok.grab_default()
+
         
         button_cancel.connect('clicked', self.quit)
         self.containers_list_window.connect('destroy', self.quit)

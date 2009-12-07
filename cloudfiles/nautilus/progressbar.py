@@ -32,7 +32,7 @@ class Upload(object):
         if ret == "Aborted":
             return False
         else:
-            return True
+            return cf_object.public_uri()
             
     def show(self):
         gladefile = os.path.join(GLADE_DIR, 'dialog_progressbar.glade')

@@ -1,33 +1,32 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.5 on Sat Sep  5 22:09:05 2009 -->
+<?xml version="1.0"?>
 <glade-interface>
+  <!-- interface-requires gtk+ 2.6 -->
+  <!-- interface-naming-policy toplevel-contextual -->
   <widget class="GtkDialog" id="dialog_containers_list">
     <property name="border_width">5</property>
     <property name="title" translatable="yes">CF Containers</property>
-    <property name="window_position">GTK_WIN_POS_CENTER_ON_PARENT</property>
+    <property name="window_position">center-on-parent</property>
     <property name="default_width">150</property>
-    <property name="type_hint">GDK_WINDOW_TYPE_HINT_NORMAL</property>
+    <property name="type_hint">normal</property>
     <property name="has_separator">False</property>
     <child internal-child="vbox">
       <widget class="GtkVBox" id="dialog-vbox1">
         <property name="visible">True</property>
-        <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
+        <property name="orientation">vertical</property>
         <property name="spacing">2</property>
-        <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
         <child>
           <widget class="GtkLabel" id="label2">
             <property name="visible">True</property>
             <property name="label" translatable="yes">Choose a container where to upload file:</property>
             <property name="use_markup">True</property>
-            <property name="justify">GTK_JUSTIFY_CENTER</property>
+            <property name="justify">center</property>
           </widget>
           <packing>
             <property name="position">1</property>
           </packing>
         </child>
         <child>
-          <widget class="GtkHSeparator" id="hseparator1">
+          <widget class="GtkHSeparator" id="hseparator2">
             <property name="visible">True</property>
           </widget>
           <packing>
@@ -39,8 +38,7 @@
           <widget class="GtkVBox" id="vbox1">
             <property name="visible">True</property>
             <property name="border_width">10</property>
-            <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
-            <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
+            <property name="orientation">vertical</property>
             <child>
               <placeholder/>
             </child>
@@ -50,7 +48,7 @@
           </packing>
         </child>
         <child>
-          <widget class="GtkHSeparator" id="hseparator2">
+          <widget class="GtkHSeparator" id="hseparator1">
             <property name="visible">True</property>
           </widget>
           <packing>
@@ -64,11 +62,14 @@
             <child>
               <widget class="GtkLabel" id="label1">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">New Container:</property>
+                <property name="label" translatable="yes">_New Container:</property>
+                <property name="use_underline">True</property>
+                <property name="mnemonic_widget">entry1</property>
               </widget>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
+                <property name="position">0</property>
               </packing>
             </child>
             <child>
@@ -76,7 +77,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="max_length">254</property>
-                <property name="invisible_char">●</property>
+                <property name="invisible_char">&#x25CF;</property>
               </widget>
               <packing>
                 <property name="position">3</property>
@@ -87,28 +88,56 @@
             <property name="position">5</property>
           </packing>
         </child>
+        <child>
+          <widget class="GtkHSeparator" id="hseparator3">
+            <property name="visible">True</property>
+          </widget>
+          <packing>
+            <property name="expand">False</property>
+            <property name="position">6</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="GtkCheckButton" id="checkbutton1">
+            <property name="label" translatable="yes">Copy to clip_board.</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">False</property>
+            <property name="use_underline">True</property>
+            <property name="yalign">0.4699999988079071</property>
+            <property name="draw_indicator">True</property>
+          </widget>
+          <packing>
+            <property name="position">7</property>
+          </packing>
+        </child>
         <child internal-child="action_area">
           <widget class="GtkHButtonBox" id="dialog-action_area1">
             <property name="visible">True</property>
-            <property name="layout_style">GTK_BUTTONBOX_SPREAD</property>
+            <property name="layout_style">spread</property>
             <child>
               <widget class="GtkButton" id="button2">
-                <property name="visible">True</property>
                 <property name="label">gtk-cancel</property>
-                <property name="use_stock">True</property>
                 <property name="response_id">-6</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="receives_default">False</property>
+                <property name="use_stock">True</property>
               </widget>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
+                <property name="position">0</property>
               </packing>
             </child>
             <child>
               <widget class="GtkButton" id="button1">
-                <property name="visible">True</property>
                 <property name="label">gtk-ok</property>
-                <property name="use_stock">True</property>
                 <property name="response_id">-5</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="receives_default">False</property>
+                <property name="use_stock">True</property>
               </widget>
               <packing>
                 <property name="expand">False</property>
@@ -119,7 +148,8 @@
           </widget>
           <packing>
             <property name="expand">False</property>
-            <property name="pack_type">GTK_PACK_END</property>
+            <property name="pack_type">end</property>
+            <property name="position">0</property>
           </packing>
         </child>
       </widget>
