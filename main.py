@@ -6,6 +6,7 @@ import socket
 import cloudfiles
 
 import gtk.glade
+import pynotify
 
 from config import CloudFilesGconf
 from progressbar import Upload
@@ -110,11 +111,25 @@ class ShowContainersList(object):
         self.containers_list_window.destroy()
 
         self.gconf_key.set_entry("default_container", str(container), "string")
-        
+
         cnt = 0
         for obj in self.stuff_to_upload:
+            pynotify.init("Uploading %s" % obj)
             upload = Upload(obj, container)
-            upload.run()
+            ret = upload.run()
+
+            if not ret:
+                conclusion = "Aborted"
+            else:
+                conclusion = "Successfully Uploaded"
+
+            title = "Rackspace Cloud Files Upload"
+            msg = "File %s %s" % (obj, conclusion)
+            
+            n = pynotify.Notification(title, msg, gtk.STOCK_FIND_AND_REPLACE)
+            n.set_timeout(pynotify.EXPIRES_DEFAULT)
+            n.show()
+            
             cnt += 1
 
     def quit(self, *args, **kwargs):

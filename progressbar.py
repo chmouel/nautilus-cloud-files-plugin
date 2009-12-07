@@ -28,7 +28,12 @@ class Upload(object):
         fobj = open(self.filename, 'rb')
         ret = cf_object.write(fobj, callback=self.callback, verify=True)
         fobj.close()
-        
+
+        if ret == "Aborted":
+            return False
+        else:
+            return True
+            
     def show(self):
         gladefile = os.path.join(GLADE_DIR, 'dialog_progressbar.glade')
         window_tree = gtk.glade.XML(gladefile)
@@ -51,15 +56,15 @@ class Upload(object):
         if self.canceled:
             return False
 
-        current = current + 4096
-        
         while gtk.events_pending():
             gtk.main_iteration()
+
+        current = current + 4096
         self.progressbar.set_fraction(float(current) / total)
         self.progressbar.set_text("%d / %d" % (current, total))
 
-        if current == total:
-            self.quit()
+        if current >= total:
+            self.window.destroy()
         
         return True
 
