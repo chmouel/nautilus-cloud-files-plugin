@@ -4,7 +4,7 @@
   <!-- interface-naming-policy toplevel-contextual -->
   <widget class="GtkDialog" id="dialog_containers_list">
     <property name="border_width">5</property>
-    <property name="title" translatable="yes">CF Containers</property>
+    <property name="title" translatable="yes">Cloud Files upload</property>
     <property name="window_position">center-on-parent</property>
     <property name="default_width">150</property>
     <property name="type_hint">normal</property>
@@ -17,7 +17,7 @@
         <child>
           <widget class="GtkLabel" id="label2">
             <property name="visible">True</property>
-            <property name="label" translatable="yes">Choose a container where to upload file:</property>
+            <property name="label" translatable="yes">Choose a container where to upload:</property>
             <property name="use_markup">True</property>
             <property name="justify">center</property>
           </widget>

@@ -2,22 +2,17 @@
 import os
 import sys
 import socket
-import urllib
-import urllib2
 
 import gtk.glade
-import pynotify
 import cloudfiles
 
 from config import CloudFilesGconf
-from progressbar import Upload
-from constants import GLADE_DIR, EXCLUDE_CONTAINERS, SHORTENER
+from constants import GLADE_DIR
+from show_container import ShowContainersList
 
 CF_CONNECTION = None
 USERNAME = None
 API_KEY = None
-
-short_url = lambda x: urllib.urlopen(SHORTENER % urllib2.quote(x)).read().strip()
 
 class CheckUsernameKey(object):
     """
@@ -61,118 +56,6 @@ class CheckUsernameKey(object):
         self.dialog_error.set_title("Cloud Files Uploader")
         self.dialog_error.connect('delete-event', self.hide_widget)
         self.dialog_error.connect('response', self.hide_widget)
-
-class ShowContainersList(object):
-    def __init__(self, stuff_to_upload):
-        self.container_master_button = None
-        self.containers_list_window = None
-        self.container_new_entry = None
-        self.gconf_key = CloudFilesGconf()
-        self.default_container = self.gconf_key.get_entry("default_container", "string")
-        self.stuff_to_upload = stuff_to_upload
-        
-    def list_containers(self):
-        if not CF_CONNECTION:
-            return []
-        try:
-            return [ cnt for cnt in CF_CONNECTION.list_containers() \
-                         if cnt not in EXCLUDE_CONTAINERS ]
-        except(cloudfiles.errors.ResponseError):
-            return []
-
-    def create_new_container(self, container):
-        if not CF_CONNECTION:
-            return
-        try:
-            return CF_CONNECTION.create_container(container)
-        except(cloudfiles.errors.ResponseError):
-            return
-    
-    def add_radiobutton(self, vbox):
-        containers = self.list_containers()
-
-        for container in sorted(containers):
-            button = gtk.RadioButton(self.container_master_button, container)
-            vbox.pack_start(button, True, True, 0)
-            if self.default_container and container == self.default_container:
-                button.set_active(True)
-            button.show()
-            
-            if not self.container_master_button:
-                self.container_master_button = button
-
-    def ok(self, *args):
-        new_container = self.container_new_entry.get_text()
-        if new_container:
-            container = self.create_new_container(new_container)
-        else:
-            for button in self.container_master_button.get_group():
-                if button.get_active():
-                    container = CF_CONNECTION.get_container(
-                        button.get_label()
-                        )
-        self.containers_list_window.destroy()
-
-        self.gconf_key.set_entry("copy_to_clipboard", self.button_clipboard.get_active(), "boolean")
-        self.gconf_key.set_entry("default_container", str(container), "string")
-
-        public_uris = []
-        cnt = 0
-        for obj in self.stuff_to_upload:
-            pynotify.init("Uploading %s" % obj)
-            upload = Upload(obj, container)
-            ret = upload.run()
-
-            if not ret:
-                conclusion = "Aborted"
-            else:
-                conclusion = "Succedeed"
-                public_uris.append(ret)
-
-            title = "Rackspace Cloud Files Upload"
-            msg = "File %s %s" % (obj, conclusion)
-
-            if self.button_clipboard.get_active() and public_uris:
-                cb = gtk.clipboard_get('CLIPBOARD')
-                cb.clear()
-                cb.set_text(" ".join(map(short_url, public_uris)))
-            
-            n = pynotify.Notification(title, msg, gtk.STOCK_FIND_AND_REPLACE)
-            n.set_timeout(pynotify.EXPIRES_DEFAULT)
-            n.show()
-            
-            cnt += 1
-
-    def quit(self, *args, **kwargs):
-        self.containers_list_window.destroy()
-            
-    def show(self):
-        gladefile = os.path.join(GLADE_DIR, 'dialog_containers_list.glade')
-        window_tree = gtk.glade.XML(gladefile)
-        
-        self.containers_list_window = \
-            window_tree.get_widget('dialog_containers_list')
-
-        self.container_new_entry = window_tree.get_widget('entry1')
-        
-        vbox1 = window_tree.get_widget('vbox1')
-        self.add_radiobutton(vbox1)
-
-        button_ok = window_tree.get_widget('button1')
-        button_cancel = window_tree.get_widget('button2')
-        self.button_clipboard = window_tree.get_widget('checkbutton1')
-
-        default_clipboard = self.gconf_key.get_entry("copy_to_clipboard", "boolean")
-        self.button_clipboard.set_active(default_clipboard)
-        
-        button_ok.connect('clicked', self.ok)
-        button_ok.set_flags(gtk.CAN_DEFAULT)
-        button_ok.grab_default()
-
-        
-        button_cancel.connect('clicked', self.quit)
-        self.containers_list_window.connect('destroy', self.quit)
-        self.containers_list_window.run()
         
 class AskUsernameKey(object):
     def __init__(self, username=None):
@@ -271,7 +154,7 @@ class CloudFileUploader(object):
         self.gconf_key.set_entry("username", username, "string")
         self.gconf_key.set_entry("api_key", api_key, "string")
 
-        container_list = ShowContainersList(self.stuff_to_upload)
+        container_list = ShowContainersList(CF_CONNECTION, self.stuff_to_upload)
         container_list.show()
         
 if __name__ == '__main__':

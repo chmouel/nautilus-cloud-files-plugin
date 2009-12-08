@@ -1,4 +1,6 @@
 import os
+import urllib2
+import urllib
 
 def detect_glade():
     glade_cwd=os.path.abspath(os.path.join(
@@ -13,3 +15,4 @@ def detect_glade():
 GLADE_DIR = detect_glade()
 EXCLUDE_CONTAINERS = ['.CDN_ACCESS_LOGS']
 SHORTENER="http://is.gd/api.php?longurl=%s"
+short_url = lambda x: urllib.urlopen(SHORTENER % urllib2.quote(x)).read().strip()
