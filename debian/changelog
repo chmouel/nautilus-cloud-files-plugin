@@ -1,3 +1,9 @@
+nautilus-cloud-files-plugin (0.2-2) unstable; urgency=low
+
+  * require python-nautilus.
+
+ -- Chmouel Boudjnah <chmouel@chmouel.com>  Tue, 08 Dec 2009 13:56:03 +0000
+
 nautilus-cloud-files-plugin (0.2-1) karmic; urgency=low
 
   * Copy to clipboard.

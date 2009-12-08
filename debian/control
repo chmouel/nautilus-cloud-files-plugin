@@ -9,7 +9,7 @@ XS-Vcs-Git: http://github.com/chmouel/nautilus-cloud-files-plugin
 
 Package: nautilus-cloud-files-plugin
 Architecture: all
-Depends: ${python:Depends}, python-cloudfiles, python-notify
+Depends: ${python:Depends}, python-cloudfiles, python-notify, python-nautilus (>= 0.5.0)
 Description: Nautilus Rackspace Cloud Files Plugin
  This is a nautilus plugin to easily upload into Rackspace Cloud
  Files.
