@@ -1,3 +1,9 @@
+nautilus-cloud-files-plugin (0.3-1) karmic; urgency=low
+
+  * Use treeview and cleanup.
+
+ -- Chmouel Boudjnah <chmouel@chmouel.com>  Tue, 08 Dec 2009 22:47:10 +0000
+
 nautilus-cloud-files-plugin (0.2-4) karmic; urgency=low
 
   * Karmic or upload to launchpad fail.
