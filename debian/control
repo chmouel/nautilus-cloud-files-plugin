@@ -3,7 +3,7 @@ Section: python
 Priority: optional
 Maintainer: Chmouel Boudjnah <chmouel@chmouel.com>
 Build-Depends-Indep: python-dev (>= 2.3.5-10), python-support (>= 0.2.3)
-Build-Depends: debhelper (>= 5.0.37.1), cdbs (>= 0.4.41)
+Build-Depends: debhelper (>= 5.0.37.1), cdbs (>= 0.4.41), python-setuptools
 Standards-Version: 3.7.3
 XS-Vcs-Git: http://github.com/chmouel/nautilus-cloud-files-plugin
 

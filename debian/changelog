@@ -1,4 +1,16 @@
-nautilus-cloud-files-plugin (0.2-2) unstable; urgency=low
+nautilus-cloud-files-plugin (0.2-4) karmic; urgency=low
+
+  * Karmic or upload to launchpad fail.
+
+ -- Chmouel Boudjnah <chmouel@chmouel.com>  Tue, 08 Dec 2009 15:34:30 +0000
+
+nautilus-cloud-files-plugin (0.2-3) unstable; urgency=low
+
+  * Build-Require python-setuptools.
+
+ -- Chmouel Boudjnah <chmouel@chmouel.com>  Tue, 08 Dec 2009 15:31:25 +0000
+
+nautilus-cloud-files-plugin (0.2-2) karmic; urgency=low
 
   * require python-nautilus.
 
