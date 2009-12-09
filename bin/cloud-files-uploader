@@ -1,0 +1,40 @@
+#!/usr/bin/python
+"""
+Simple PYGTK uploader for Cloud Files
+"""
+import sys
+import os
+
+import pygtk
+pygtk.require('2.0')
+import gtk
+
+from cloudfiles.nautilus.main import CloudFileUploader
+
+stuff_to_upload = sys.argv[1:]
+
+if not stuff_to_upload:
+    chooser = gtk.FileChooserDialog(title=None,action=gtk.FILE_CHOOSER_ACTION_OPEN,
+                                    buttons=(gtk.STOCK_CANCEL,gtk.RESPONSE_CANCEL,gtk.STOCK_OPEN,gtk.RESPONSE_OK))
+
+    chooser.set_default_response(gtk.RESPONSE_OK)
+    response = chooser.run()
+    if response == gtk.RESPONSE_OK:
+        stuff_to_upload = [ chooser.get_filename() ]
+
+    chooser.destroy()
+
+if not stuff_to_upload:
+    sys.exit(0)
+
+for f in stuff_to_upload:
+    if not os.path.isfile(f):
+        print "%s is not a file or does not exists."
+        stuff_to_upload.remove(f)
+        continue
+
+c = CloudFileUploader(stuff_to_upload)
+ret = c.main()
+sys.exit(0)
+
+

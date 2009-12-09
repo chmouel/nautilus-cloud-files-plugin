@@ -10,7 +10,8 @@ setup(name = PACKAGE, version = VERSION,
       author = "Chmouel Boudjnah",
       author_email = "chmouel@chmouel.com",
       url = "http://github.com/chmouel/nautilus-cloud-files-plugin",
-      packages= [ "cloudfiles.nautilus" ],
+      packages=[ "cloudfiles.nautilus" ],
+      scripts=['bin/cloud-files-uploader'],
       data_files=[
         ('share/nautilus-cloud-files-plugin/glade', glob.glob('glade/*')),
         ('lib/nautilus/extensions-2.0/python', ["extensions/nautilus_cloudfiles.py"])
