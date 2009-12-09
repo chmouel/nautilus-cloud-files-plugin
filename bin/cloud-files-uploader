@@ -17,6 +17,9 @@ if not stuff_to_upload:
     chooser = gtk.FileChooserDialog(title=None,action=gtk.FILE_CHOOSER_ACTION_OPEN,
                                     buttons=(gtk.STOCK_CANCEL,gtk.RESPONSE_CANCEL,gtk.STOCK_OPEN,gtk.RESPONSE_OK))
 
+    chooser.set_title("Choose file(s) to upload")
+    chooser.set_select_multiple(True)
+
     chooser.set_default_response(gtk.RESPONSE_OK)
     response = chooser.run()
     if response == gtk.RESPONSE_OK:
