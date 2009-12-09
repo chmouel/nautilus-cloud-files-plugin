@@ -30,7 +30,7 @@ class NautilusCloudFilesExtension(nautilus.MenuProvider):
         return item,
 
     def is_valid(self, f):
-        return f.get_uri_scheme() == 'file'
+        return f.get_uri_scheme() == 'file' and not f.is_directory()
     
 
     

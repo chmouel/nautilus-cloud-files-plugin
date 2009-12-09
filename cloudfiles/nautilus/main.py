@@ -165,6 +165,12 @@ if __name__ == '__main__':
         print "You need to specify files on the command line"
         sys.exit(0)
 
+    for f in stuff_to_upload:
+        if not os.path.isfile(f):
+            print "%s is not a file or does not exists."
+            stuff_to_upload.remove(f)
+            continue
+        
     c = CloudFileUploader(stuff_to_upload)
     ret = c.main()
     sys.exit(0)
