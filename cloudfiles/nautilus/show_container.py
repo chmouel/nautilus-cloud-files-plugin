@@ -148,6 +148,8 @@ class ShowContainersList(object):
         self.containers_list_window = \
             window_tree.get_widget('dialog_containers_list')
 
+        self.containers_list_window.set_position(gtk.WIN_POS_CENTER)
+        
         self.container_new_entry = window_tree.get_widget('entry1')
         vbox1 = window_tree.get_widget('vbox1')
         self.add_tree_list(vbox1)
