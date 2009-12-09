@@ -156,6 +156,8 @@ class CloudFileUploader(object):
 
         container_list = ShowContainersList(CF_CONNECTION, self.stuff_to_upload)
         container_list.show()
+
+        return True
         
 if __name__ == '__main__':
     stuff_to_upload = sys.argv[1:]
@@ -164,6 +166,6 @@ if __name__ == '__main__':
         sys.exit(0)
 
     c = CloudFileUploader(stuff_to_upload)
-    c.main()
-    gtk.main()
+    ret = c.main()
+    sys.exit(0)
             
