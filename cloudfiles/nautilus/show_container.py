@@ -62,13 +62,17 @@ class ShowContainersList(object):
         for obj in self.stuff_to_upload:
             pynotify.init("Uploading %s" % obj)
             upload = Upload(obj, container)
-            ret = upload.run()
+            try:
+                ret = upload.run()
+            except(cloudfiles.errors.ContainerNotPublic):
+                ret = "NotPublic"
 
             if not ret:
                 conclusion = "Aborted"
             else:
                 conclusion = "uploaded to %s" % (container)
-                public_uris.append(ret)
+                if ret != "NotPublic":
+                    public_uris.append(ret)
 
             title = "Rackspace Cloud Files Upload"
             msg = "File %s %s" % (obj, conclusion)
