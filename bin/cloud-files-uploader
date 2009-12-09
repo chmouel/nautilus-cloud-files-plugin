@@ -23,8 +23,8 @@ if not stuff_to_upload:
     chooser.set_default_response(gtk.RESPONSE_OK)
     response = chooser.run()
     if response == gtk.RESPONSE_OK:
-        stuff_to_upload = [ chooser.get_filename() ]
-
+        stuff_to_upload = chooser.get_filenames()
+        
     chooser.destroy()
 
 if not stuff_to_upload:
@@ -38,6 +38,6 @@ for f in stuff_to_upload:
 
 c = CloudFileUploader(stuff_to_upload)
 ret = c.main()
-sys.exit(0)
+
 
 
