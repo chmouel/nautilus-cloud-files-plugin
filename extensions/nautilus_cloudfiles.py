@@ -6,8 +6,8 @@ from cloudfiles.nautilus import main
 
 class NautilusCloudFilesExtension(nautilus.MenuProvider):
     def __init__(self):
-        selfname = type(self).__name__
-
+        print "Initializing nautilus-cloud-files extension"
+        
     def menu_activate_cb(self, menu, files):
         #List the valid files
         stuff = [f for f in files if not f.is_gone() and self.is_valid(f)]
@@ -23,7 +23,7 @@ class NautilusCloudFilesExtension(nautilus.MenuProvider):
         
         item = nautilus.MenuItem('NautilusPython::upload_rscf_item',
                                  'Upload to Rackspace CloudFiles',
-                                 'Upload to Rackspace CF' ,
+                                 'Upload to Rackspace CF',
                                  gtk.STOCK_CONVERT
                                  )
         item.connect('activate', self.menu_activate_cb, files)
