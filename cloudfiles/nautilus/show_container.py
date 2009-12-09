@@ -46,7 +46,10 @@ class ShowContainersList(object):
             container = self.create_new_container(new_container)
         else:
             if not self.chosen_container:
-                return False
+                if self.default_container:
+                    self.chosen_container = self.default_container
+                else:
+                    return False
             container = self.cnx.get_container(self.chosen_container)
         self.containers_list_window.destroy()
 
@@ -64,7 +67,7 @@ class ShowContainersList(object):
             if not ret:
                 conclusion = "Aborted"
             else:
-                conclusion = "Succedeed"
+                conclusion = "uploaded to %s" % (container)
                 public_uris.append(ret)
 
             title = "Rackspace Cloud Files Upload"
