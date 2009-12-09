@@ -122,8 +122,6 @@ class ShowContainersList(object):
         str_cell_renderer = gtk.CellRendererText()
         text_col = gtk.TreeViewColumn("Choose Container",
                                       str_cell_renderer, text=0)
-        # make the header a "button" which deletes marked tasks
-        #self.text_col.set_min_width(int(.90*width))
         treeview.insert_column(text_col, -1)
 
         treeview.set_reorderable(1) 
