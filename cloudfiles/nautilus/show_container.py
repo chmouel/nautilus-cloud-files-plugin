@@ -73,7 +73,7 @@ class ShowContainersList(object):
                 conclusion = "uploaded to %s" % (container)
                 if ret != "NotPublic":
                     public_uris.append(ret)
-
+                    
             title = "Rackspace Cloud Files Upload"
             msg = "File %s %s" % (obj, conclusion)
 
@@ -103,7 +103,8 @@ class ShowContainersList(object):
         
     def add_tree_list(self, vbox):
         self.list_store = gtk.ListStore(gobject.TYPE_STRING,
-                                        gobject.TYPE_BOOLEAN)
+                                        gobject.TYPE_BOOLEAN,
+                                        gobject.TYPE_STRING)
         
         # use list store as treemodel for treeview
         treeview = gtk.TreeView(self.list_store)
@@ -113,15 +114,18 @@ class ShowContainersList(object):
         bool_cell_renderer.set_radio(True)
         bool_cell_renderer.set_property('activatable', 1)
         bool_cell_renderer.connect('toggled', self.toggled, treeview)
-
         bool_col = gtk.TreeViewColumn("",
-                                      bool_cell_renderer, 
+                                      bool_cell_renderer,
                                       active=1)
         treeview.insert_column(bool_col, -1)
 
         str_cell_renderer = gtk.CellRendererText()
         text_col = gtk.TreeViewColumn("Choose Container",
                                       str_cell_renderer, text=0)
+        str_cell_renderer.set_property('background-set' , True)
+        str_cell_renderer.set_property('foreground-set' , True)
+        text_col.set_attributes(str_cell_renderer,text=0, background=2)
+    
         treeview.insert_column(text_col, -1)
 
         treeview.set_reorderable(1) 
@@ -129,12 +133,14 @@ class ShowContainersList(object):
         treeview.show()
         treeview.columns_autosize()
 
+        background_color="#FFFFFF"
         containers = self.list_containers()
         for container in sorted(containers):
+            background_color = background_color == "#F0F5FE" and "#FFFFFF" or "#F0F5FE"
             checked = 0
             if container == self.default_container:
                 checked = 1
-            self.list_store.append([container, checked])
+            self.list_store.append([container, checked, background_color])
         
         vbox.pack_start(treeview, True, True, 0)
         #self.containers_list_window.add(treeview)
