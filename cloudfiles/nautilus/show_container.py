@@ -115,8 +115,9 @@ class ShowContainersList(object):
         bool_cell_renderer.set_property('activatable', 1)
         bool_cell_renderer.connect('toggled', self.toggled, treeview)
         bool_col = gtk.TreeViewColumn("",
-                                      bool_cell_renderer,
+                                      bool_cell_renderer, 
                                       active=1)
+
         treeview.insert_column(bool_col, -1)
 
         str_cell_renderer = gtk.CellRendererText()
@@ -133,10 +134,10 @@ class ShowContainersList(object):
         treeview.show()
         treeview.columns_autosize()
 
-        background_color="#FFFFFF"
+        background_color="#EEEEEE"
         containers = self.list_containers()
         for container in sorted(containers):
-            background_color = background_color == "#F0F5FE" and "#FFFFFF" or "#F0F5FE"
+            background_color = background_color == "#EEEEEE" and "#FFFFFF" or "#EEEEEE"
             checked = 0
             if container == self.default_container:
                 checked = 1
